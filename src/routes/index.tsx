@@ -4,27 +4,39 @@ import SignUp from '../pages/Auth/SignUp'
 import Home from '../pages/Dashboard/Home'
 import Income from '../pages/Dashboard/Income'
 import Expense from '../pages/Dashboard/Expense'
+import ProtectedRoute from '../components/ProtectedRoute'
+import AuthLayout from '../components/layout/AuthLayout'
 
 const router = createBrowserRouter([
   {
-    path: '/login',
-    element: <Login />,
+    element: <AuthLayout />,
+    children: [
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/signup',
+        element: <SignUp />,
+      },
+    ],
   },
   {
-    path: '/signup',
-    element: <SignUp />,
-  },
-  {
-    path: '/',
-    element: <Home />,
-  },
-  {
-    path: '/income',
-    element: <Income />,
-  },
-  {
-    path: '/expense',
-    element: <Expense />,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: '/',
+        element: <Home />,
+      },
+      {
+        path: '/income',
+        element: <Income />,
+      },
+      {
+        path: '/expense',
+        element: <Expense />,
+      },
+    ],
   },
 ])
 
