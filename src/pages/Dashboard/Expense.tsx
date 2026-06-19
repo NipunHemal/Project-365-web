@@ -50,10 +50,17 @@ const Expense = () => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        const amount = parseFloat(formData.amount);
+
+        if (isNaN(amount) || amount <= 0) {
+            // Handle invalid amount (optional: set error state)
+            return;
+        }
+
         const result = await dispatch(createExpense({
             icon: formData.icon,
             category: formData.category,
-            amount: parseFloat(formData.amount),
+            amount: amount,
             date: formData.date,
         }));
         if (createExpense.fulfilled.match(result)) {
@@ -174,7 +181,7 @@ const Expense = () => {
                                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                                 <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} dy={10} />
                                 <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `Rs ${value}`} />
-                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number) => [formatCurrency(value), 'Amount']} />
+                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number | undefined) => [formatCurrency(value || 0), 'Amount']} />
                                 <Area type="monotone" dataKey="amount" stroke="#ef4444" fillOpacity={1} fill="url(#colorExpense)" strokeWidth={2} />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -189,7 +196,7 @@ const Expense = () => {
                                 <Pie data={pieChartData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value">
                                     {pieChartData.map((_, index) => (<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />))}
                                 </Pie>
-                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number) => formatCurrency(value)} />
+                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number | undefined) => formatCurrency(value || 0)} />
                                 <Legend verticalAlign="bottom" height={36} iconType="circle" />
                             </PieChart>
                         </ResponsiveContainer>
@@ -208,7 +215,7 @@ const Expense = () => {
                                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} dy={10} />
                                 <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `Rs ${value}`} />
-                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number) => formatCurrency(value)} />
+                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number | undefined) => formatCurrency(value || 0)} />
                                 <Bar dataKey="amount" fill="#ef4444" radius={[6, 6, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>

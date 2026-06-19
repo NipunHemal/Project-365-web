@@ -13,7 +13,10 @@ export const fetchExpenses = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await api.get<ApiResponse<{ expenses: Expense[] }>>('/expense/all');
-            return response.data.data!.expenses;
+            return response.data.data!.expenses.map(expense => ({
+                ...expense,
+                amount: Number(expense.amount)
+            }));
         } catch (error: unknown) {
             const err = error as { response?: { data?: { message?: string } } };
             return rejectWithValue(err.response?.data?.message || 'Failed to fetch expenses');
