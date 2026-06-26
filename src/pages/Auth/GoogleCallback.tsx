@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch } from '@/store/hooks';
-import { getProfile } from '@/store/slices/authSlice';
+import { getProfile, setToken } from '@/store/slices/authSlice';
 
 const GoogleCallback = () => {
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ const GoogleCallback = () => {
         }
 
         if (token) {
-            localStorage.setItem('token', token);
+            dispatch(setToken(token));
             // We need to fetch the user profile now that we have the token
             dispatch(getProfile())
                 .unwrap()
