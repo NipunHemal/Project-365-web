@@ -47,6 +47,37 @@ export const deleteIncome = createAsyncThunk(
     }
 );
 
+export const downloadIncomePDF = createAsyncThunk(
+    'income/downloadPDF',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await api.get('/income/downloadPdf', {
+                responseType: 'blob',
+            });
+
+            // Create a blob from the response data
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+
+            // Create a link element and trigger download
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `incomes_${new Date().toISOString().split('T')[0]}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            link.parentNode?.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            return true;
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } } };
+            return rejectWithValue(err.response?.data?.message || 'Failed to download PDF');
+        }
+    }
+);
+
 const incomeSlice = createSlice({
     name: 'income',
     initialState,

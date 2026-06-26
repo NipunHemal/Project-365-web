@@ -37,7 +37,7 @@ const Sidebar = () => {
 
             <div className="p-4 border-t border-gray-200">
                 <div className="text-xs text-gray-400 text-center">
-                    © 2024 Expense Tracker
+                    © 2026 Expense Tracker
                 </div>
             </div>
         </aside>

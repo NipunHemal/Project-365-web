@@ -1,13 +1,14 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchIncomes, createIncome, deleteIncome } from '@/store/slices/incomeSlice';
+import { fetchIncomes, createIncome, deleteIncome, downloadIncomePDF } from '@/store/slices/incomeSlice';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import {
     HiOutlinePlus,
     HiOutlineTrash,
     HiOutlineArrowTrendingUp,
     HiOutlineBanknotes,
-    HiOutlineCalendar
+    HiOutlineCalendar,
+    HiOutlineDocumentArrowDown
 } from 'react-icons/hi2';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -108,10 +109,16 @@ const Income = () => {
                     <h1 className="text-2xl font-bold text-gray-900">Income</h1>
                     <p className="text-gray-500 mt-1">Track and manage your income sources</p>
                 </div>
-                <Button onClick={() => setDialogOpen(true)}>
-                    <HiOutlinePlus className="mr-2 h-5 w-5" />
-                    Add Income
-                </Button>
+                <div className="flex gap-3">
+                    <Button variant="secondary" onClick={() => dispatch(downloadIncomePDF())}>
+                        <HiOutlineDocumentArrowDown className="mr-2 h-5 w-5" />
+                        Download
+                    </Button>
+                    <Button onClick={() => setDialogOpen(true)}>
+                        <HiOutlinePlus className="mr-2 h-5 w-5" />
+                        Add Income
+                    </Button>
+                </div>
             </div>
 
             {error && (
@@ -170,7 +177,7 @@ const Income = () => {
                                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                                 <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} dy={10} />
                                 <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `Rs ${value}`} />
-                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number) => [formatCurrency(value), 'Amount']} />
+                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number | undefined) => [formatCurrency(value || 0), 'Amount']} />
                                 <Area type="monotone" dataKey="amount" stroke="#10b981" fillOpacity={1} fill="url(#colorIncome)" strokeWidth={2} />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -185,7 +192,7 @@ const Income = () => {
                                 <Pie data={pieChartData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value">
                                     {pieChartData.map((_, index) => (<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />))}
                                 </Pie>
-                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number) => formatCurrency(value)} />
+                                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number | undefined) => formatCurrency(value || 0)} />
                                 <Legend verticalAlign="bottom" height={36} iconType="circle" />
                             </PieChart>
                         </ResponsiveContainer>
@@ -202,7 +209,7 @@ const Income = () => {
                             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                             <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} dy={10} />
                             <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `Rs ${value}`} />
-                            <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number) => formatCurrency(value)} />
+                            <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} formatter={(value: number | undefined) => formatCurrency(value || 0)} />
                             <Bar dataKey="amount" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={40} />
                         </BarChart>
                     </ResponsiveContainer>

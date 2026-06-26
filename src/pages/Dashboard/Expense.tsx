@@ -1,13 +1,14 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchExpenses, createExpense, deleteExpense } from '@/store/slices/expenseSlice';
+import { fetchExpenses, createExpense, deleteExpense, downloadExpensePDF } from '@/store/slices/expenseSlice';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import {
     HiOutlinePlus,
     HiOutlineTrash,
     HiOutlineArrowTrendingDown,
     HiOutlineShoppingBag,
-    HiOutlineTag
+    HiOutlineTag,
+    HiOutlineDocumentArrowDown
 } from 'react-icons/hi2';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -119,10 +120,16 @@ const Expense = () => {
                     <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
                     <p className="text-gray-500 mt-1">Track and manage your spending</p>
                 </div>
-                <Button onClick={() => setDialogOpen(true)} className="bg-rose-600 hover:bg-rose-700">
-                    <HiOutlinePlus className="mr-2 h-5 w-5" />
-                    Add Expense
-                </Button>
+                <div className="flex gap-3">
+                    <Button variant="secondary" onClick={() => dispatch(downloadExpensePDF())}>
+                        <HiOutlineDocumentArrowDown className="mr-2 h-5 w-5" />
+                        Download
+                    </Button>
+                    <Button onClick={() => setDialogOpen(true)} className="bg-rose-600 hover:bg-rose-700">
+                        <HiOutlinePlus className="mr-2 h-5 w-5" />
+                        Add Expense
+                    </Button>
+                </div>
             </div>
 
             {error && (
