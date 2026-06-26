@@ -2,11 +2,12 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import AuthLayout from './components/layout/AuthLayout';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/auth/Login';
-import SignUp from './pages/auth/SignUp';
-import Home from './pages/dashboard/Home';
-import Income from './pages/dashboard/Income';
-import Expense from './pages/dashboard/Expense';
+import Login from './pages/Auth/Login';
+import SignUp from './pages/Auth/SignUp';
+import Home from './pages/Dashboard/Home';
+import Income from './pages/Dashboard/Income';
+import Expense from './pages/Dashboard/Expense';
+import GoogleCallback from './pages/Auth/GoogleCallback';
 
 const router = createBrowserRouter([
     {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
             {
                 path: '/signup',
                 element: <SignUp />,
+            },
+            {
+                path: '/auth/google/callback',
+                element: <GoogleCallback />,
             },
         ],
     },

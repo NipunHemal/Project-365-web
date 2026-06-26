@@ -58,6 +58,22 @@ const Login = () => {
                 />
 
                 <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full flex items-center justify-center gap-2 mb-4"
+                    onClick={() => {
+                        window.location.href = `${import.meta.env.VITE_SERVER_URL || 'http://localhost:8080/api'}/auth/google`;
+                    }}
+                >
+                    <img
+                        src="https://www.google.com/favicon.ico"
+                        alt="Google"
+                        className="w-5 h-5"
+                    />
+                    Sign in with Google
+                </Button>
+
+                <Button
                     type="submit"
                     className="w-full"
                     isLoading={isLoading}
