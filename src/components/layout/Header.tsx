@@ -1,9 +1,13 @@
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { logout } from '@/store/slices/authSlice';
-import { HiArrowRightOnRectangle, HiUser } from 'react-icons/hi2';
+import { HiArrowRightOnRectangle, HiUser, HiBars3 } from 'react-icons/hi2';
 import Button from '@/components/ui/Button';
 
-const Header = () => {
+interface HeaderProps {
+    onMenuClick?: () => void;
+}
+
+const Header = ({ onMenuClick }: HeaderProps) => {
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
 
@@ -12,8 +16,17 @@ const Header = () => {
     };
 
     return (
-        <header className="bg-white border-b border-gray-200 h-16 px-8 flex items-center justify-between sticky top-0 z-10">
-            <h2 className="text-xl font-semibold text-gray-800 md:hidden">TrackIt</h2>
+        <header className="bg-white border-b border-gray-200 h-16 px-4 md:px-8 flex items-center justify-between sticky top-0 z-10 transition-all duration-300">
+            <div className="flex items-center gap-4">
+                <button
+                    onClick={onMenuClick}
+                    className="p-2 md:hidden text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    aria-label="Toggle menu"
+                >
+                    <HiBars3 className="w-6 h-6" />
+                </button>
+                <h2 className="text-xl font-semibold text-gray-800 md:hidden">TrackIt</h2>
+            </div>
             <div className="flex-1"></div>
 
             <div className="flex items-center gap-4">
@@ -34,7 +47,6 @@ const Header = () => {
 
                 <Button
                     variant="ghost"
-                    size="sm"
                     onClick={handleLogout}
                     className="text-gray-500 hover:text-red-600"
                     title="Logout"
