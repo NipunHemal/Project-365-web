@@ -38,6 +38,7 @@ export interface AuthResponse {
 export interface Income {
   id: string;
   userId: string;
+  walletId?: string;
   icon: string;
   source: string;
   amount: number;
@@ -53,6 +54,7 @@ export interface IncomeState {
 }
 
 export interface CreateIncomeDto {
+  walletId: string;
   icon: string;
   source: string;
   amount: number;
@@ -63,6 +65,7 @@ export interface CreateIncomeDto {
 export interface Expense {
   id: string;
   userId: string;
+  walletId?: string;
   icon: string;
   category: string;
   amount: number;
@@ -78,10 +81,53 @@ export interface ExpenseState {
 }
 
 export interface CreateExpenseDto {
+  walletId: string;
   icon: string;
   category: string;
   amount: number;
   date: string;
+}
+
+// Wallet types
+export interface Wallet {
+  id: string;
+  name: string;
+  type: 'cash' | 'bank';
+  icon: string;
+  openingBalance: number;
+  currency: string;
+  balance: number;
+}
+
+export interface WalletState {
+  wallets: Wallet[];
+  netWorth: number;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface CreateWalletDto {
+  name: string;
+  type: 'cash' | 'bank';
+  icon: string;
+  openingBalance: number;
+}
+
+export interface Transfer {
+  id: string;
+  fromWalletId: string;
+  toWalletId: string;
+  amount: number;
+  date: string;
+  note?: string;
+}
+
+export interface CreateTransferDto {
+  fromWalletId: string;
+  toWalletId: string;
+  amount: number;
+  date: string;
+  note?: string;
 }
 
 // Dashboard types

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { HiHome, HiCurrencyDollar, HiCreditCard, HiXMark } from 'react-icons/hi2';
+import { HiHome, HiCurrencyDollar, HiCreditCard, HiWallet, HiXMark } from 'react-icons/hi2';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -10,6 +10,7 @@ interface SidebarProps {
 const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
     const links = [
         { name: 'Dashboard', path: '/dashboard', icon: HiHome },
+        { name: 'Wallets', path: '/wallets', icon: HiWallet },
         { name: 'Incomes', path: '/income', icon: HiCurrencyDollar },
         { name: 'Expenses', path: '/expense', icon: HiCreditCard },
     ];

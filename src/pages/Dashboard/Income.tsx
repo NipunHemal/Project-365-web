@@ -1,6 +1,7 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchIncomes, createIncome, deleteIncome, downloadIncomePDF } from '@/store/slices/incomeSlice';
+import { fetchWallets } from '@/store/slices/walletSlice';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import {
     HiOutlinePlus,
@@ -37,8 +38,10 @@ const INCOME_ICONS = ['💰', '💵', '💳', '🏦', '💼', '📈', '🎯', '�
 const Income = () => {
     const dispatch = useAppDispatch();
     const { incomes, isLoading, error } = useAppSelector((state) => state.income);
+    const { wallets } = useAppSelector((state) => state.wallet);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [formData, setFormData] = useState({
+        walletId: '',
         icon: '💰',
         source: '',
         amount: '',
@@ -47,19 +50,31 @@ const Income = () => {
 
     useEffect(() => {
         dispatch(fetchIncomes());
+        dispatch(fetchWallets());
     }, [dispatch]);
+
+    // Default the wallet selector to the first wallet once wallets load.
+    useEffect(() => {
+        if (!formData.walletId && wallets.length > 0) {
+            setFormData((f) => ({ ...f, walletId: wallets[0].id }));
+        }
+    }, [wallets, formData.walletId]);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        if (!formData.walletId) return;
         const result = await dispatch(createIncome({
+            walletId: formData.walletId,
             icon: formData.icon,
             source: formData.source,
             amount: parseFloat(formData.amount),
             date: formData.date,
         }));
         if (createIncome.fulfilled.match(result)) {
+            // Balance changed — refresh wallets.
+            dispatch(fetchWallets());
             setDialogOpen(false);
-            setFormData({ icon: '💰', source: '', amount: '', date: new Date().toISOString().split('T')[0] });
+            setFormData({ walletId: wallets[0]?.id || '', icon: '💰', source: '', amount: '', date: new Date().toISOString().split('T')[0] });
         }
     };
 
@@ -278,6 +293,21 @@ const Income = () => {
                         onChange={(e) => setFormData({ ...formData, source: e.target.value })}
                         required
                     />
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Wallet</label>
+                        <select
+                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            value={formData.walletId}
+                            onChange={(e) => setFormData({ ...formData, walletId: e.target.value })}
+                            required
+                        >
+                            {wallets.length === 0 && <option value="">No wallets — create one first</option>}
+                            {wallets.map((w) => (
+                                <option key={w.id} value={w.id}>{w.icon} {w.name} — {formatCurrency(w.balance)}</option>
+                            ))}
+                        </select>
+                    </div>
 
                     <Input
                         label="Amount"

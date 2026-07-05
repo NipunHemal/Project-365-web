@@ -2,8 +2,22 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from '@/api/api';
 import { AuthState, LoginCredentials, RegisterCredentials, User, AuthResponse } from '@/types';
 
+const loadStoredUser = (): User | null => {
+    const raw = localStorage.getItem('user');
+    if (!raw) return null;
+    try {
+        return JSON.parse(raw) as User;
+    } catch {
+        // Corrupt / non-JSON value (e.g. leftover data from another app on this origin).
+        // Drop it so a bad value can't crash app startup.
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        return null;
+    }
+};
+
 const initialState: AuthState = {
-    user: JSON.parse(localStorage.getItem('user') || 'null'),
+    user: loadStoredUser(),
     token: localStorage.getItem('token'),
     isLoading: false,
     error: null,

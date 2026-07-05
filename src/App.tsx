@@ -7,6 +7,7 @@ import SignUp from './pages/Auth/SignUp';
 import Home from './pages/Dashboard/Home';
 import Income from './pages/Dashboard/Income';
 import Expense from './pages/Dashboard/Expense';
+import Wallets from './pages/Dashboard/Wallets';
 import GoogleCallback from './pages/Auth/GoogleCallback';
 
 const router = createBrowserRouter([
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
                     {
                         path: '/expense',
                         element: <Expense />,
+                    },
+                    {
+                        path: '/wallets',
+                        element: <Wallets />,
                     },
                 ],
             },
