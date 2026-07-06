@@ -37,9 +37,10 @@ const EXPENSE_ICONS = ['🛒', '🍔', '🚗', '🏠', '💡', '📱', '🎬', '
 
 const Expense = () => {
     const dispatch = useAppDispatch();
-    const { expenses, isLoading, error } = useAppSelector((state) => state.expense);
+    const { expenses: allExpenses, isLoading, error } = useAppSelector((state) => state.expense);
     const { wallets } = useAppSelector((state) => state.wallet);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [walletFilter, setWalletFilter] = useState('all');
     const [formData, setFormData] = useState({
         walletId: '',
         icon: '🛒',
@@ -92,6 +93,15 @@ const Expense = () => {
         }
     };
 
+    // Look up a wallet by id (for row labels).
+    const findWallet = (id?: string) => wallets.find((w) => w.id === id);
+
+    // Filter the transactions by the selected wallet; everything below (stats,
+    // charts, list) derives from this filtered set.
+    const expenses = walletFilter === 'all'
+        ? allExpenses
+        : allExpenses.filter((expense) => expense.walletId === walletFilter);
+
     const totalExpense = expenses.reduce((sum, expense) => sum + expense.amount, 0);
     const avgExpense = expenses.length > 0 ? totalExpense / expenses.length : 0;
 
@@ -137,6 +147,16 @@ const Expense = () => {
                     <p className="text-gray-500 mt-1">Track and manage your spending</p>
                 </div>
                 <div className="flex gap-3">
+                    <select
+                        className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                        value={walletFilter}
+                        onChange={(e) => setWalletFilter(e.target.value)}
+                    >
+                        <option value="all">All Wallets</option>
+                        {wallets.map((w) => (
+                            <option key={w.id} value={w.id}>{w.icon} {w.name}</option>
+                        ))}
+                    </select>
                     <Button variant="secondary" onClick={() => dispatch(downloadExpensePDF())}>
                         <HiOutlineDocumentArrowDown className="mr-2 h-5 w-5" />
                         Download
@@ -289,7 +309,10 @@ const Expense = () => {
                                     </div>
                                     <div>
                                         <p className="font-semibold text-gray-900">{expense.category}</p>
-                                        <p className="text-sm text-gray-500">{formatDate(expense.date)}</p>
+                                        <p className="text-sm text-gray-500">
+                                            {formatDate(expense.date)}
+                                            {findWallet(expense.walletId) && ` · ${findWallet(expense.walletId)!.icon} ${findWallet(expense.walletId)!.name}`}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">

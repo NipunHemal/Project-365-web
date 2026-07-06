@@ -37,9 +37,10 @@ const INCOME_ICONS = ['💰', '💵', '💳', '🏦', '💼', '📈', '🎯', '�
 
 const Income = () => {
     const dispatch = useAppDispatch();
-    const { incomes, isLoading, error } = useAppSelector((state) => state.income);
+    const { incomes: allIncomes, isLoading, error } = useAppSelector((state) => state.income);
     const { wallets } = useAppSelector((state) => state.wallet);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [walletFilter, setWalletFilter] = useState('all');
     const [formData, setFormData] = useState({
         walletId: '',
         icon: '💰',
@@ -84,6 +85,15 @@ const Income = () => {
         }
     };
 
+    // Look up a wallet by id (for row labels).
+    const findWallet = (id?: string) => wallets.find((w) => w.id === id);
+
+    // Filter the transactions by the selected wallet; everything below (stats,
+    // charts, list) derives from this filtered set.
+    const incomes = walletFilter === 'all'
+        ? allIncomes
+        : allIncomes.filter((income) => income.walletId === walletFilter);
+
     const totalIncome = incomes.reduce((sum, income) => sum + income.amount, 0);
     const avgIncome = incomes.length > 0 ? totalIncome / incomes.length : 0;
 
@@ -125,6 +135,16 @@ const Income = () => {
                     <p className="text-gray-500 mt-1">Track and manage your income sources</p>
                 </div>
                 <div className="flex gap-3">
+                    <select
+                        className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        value={walletFilter}
+                        onChange={(e) => setWalletFilter(e.target.value)}
+                    >
+                        <option value="all">All Wallets</option>
+                        {wallets.map((w) => (
+                            <option key={w.id} value={w.id}>{w.icon} {w.name}</option>
+                        ))}
+                    </select>
                     <Button variant="secondary" onClick={() => dispatch(downloadIncomePDF())}>
                         <HiOutlineDocumentArrowDown className="mr-2 h-5 w-5" />
                         Download
@@ -246,7 +266,10 @@ const Income = () => {
                                     </div>
                                     <div>
                                         <p className="font-semibold text-gray-900">{income.source}</p>
-                                        <p className="text-sm text-gray-500">{formatDate(income.date)}</p>
+                                        <p className="text-sm text-gray-500">
+                                            {formatDate(income.date)}
+                                            {findWallet(income.walletId) && ` · ${findWallet(income.walletId)!.icon} ${findWallet(income.walletId)!.name}`}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">

@@ -32,6 +32,9 @@ const Wallets = () => {
         note: '',
         date: new Date().toISOString().split('T')[0],
     });
+    // Inline validation feedback for the transfer form so a blocked submit is
+    // never silent.
+    const [transferError, setTransferError] = useState('');
 
     useEffect(() => {
         dispatch(fetchWallets());
@@ -53,9 +56,20 @@ const Wallets = () => {
 
     const handleTransfer = async (e: FormEvent) => {
         e.preventDefault();
+        setTransferError('');
         const amount = parseFloat(transferForm.amount);
-        if (isNaN(amount) || amount <= 0) return;
-        if (transferForm.fromWalletId === transferForm.toWalletId) return;
+        if (isNaN(amount) || amount <= 0) {
+            setTransferError('Enter an amount greater than zero.');
+            return;
+        }
+        if (!transferForm.fromWalletId || !transferForm.toWalletId) {
+            setTransferError('Select both a source and destination wallet.');
+            return;
+        }
+        if (transferForm.fromWalletId === transferForm.toWalletId) {
+            setTransferError('Source and destination must be different wallets.');
+            return;
+        }
 
         const result = await dispatch(createTransfer({
             fromWalletId: transferForm.fromWalletId,
@@ -67,10 +81,14 @@ const Wallets = () => {
         if (createTransfer.fulfilled.match(result)) {
             setTransferDialog(false);
             setTransferForm({ fromWalletId: '', toWalletId: '', amount: '', note: '', date: new Date().toISOString().split('T')[0] });
+        } else {
+            // Surface the server-side reason (e.g. "Insufficient funds in wallet").
+            setTransferError((result.payload as string) || 'Failed to complete transfer.');
         }
     };
 
     const openTransfer = () => {
+        setTransferError('');
         // Pre-fill sensible defaults: first wallet -> second wallet.
         setTransferForm((f) => ({
             ...f,
@@ -217,12 +235,28 @@ const Wallets = () => {
             {/* Transfer modal */}
             <Modal isOpen={transferDialog} onClose={() => setTransferDialog(false)} title="Transfer Between Wallets">
                 <form onSubmit={handleTransfer} className="space-y-6">
+                    {transferError && (
+                        <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl">{transferError}</div>
+                    )}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">From</label>
                         <select
                             className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             value={transferForm.fromWalletId}
-                            onChange={(e) => setTransferForm({ ...transferForm, fromWalletId: e.target.value })}
+                            onChange={(e) => {
+                                const fromWalletId = e.target.value;
+                                setTransferForm((f) => ({
+                                    ...f,
+                                    fromWalletId,
+                                    // Keep the destination valid: if it now matches the
+                                    // source, move it to another wallet so state can't
+                                    // silently hold from === to.
+                                    toWalletId:
+                                        f.toWalletId === fromWalletId
+                                            ? wallets.find((w) => w.id !== fromWalletId)?.id || ''
+                                            : f.toWalletId,
+                                }));
+                            }}
                             required
                         >
                             {wallets.map((w) => (

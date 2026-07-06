@@ -162,6 +162,12 @@ export interface DashboardState {
   error: string | null;
 }
 
+// AI assistant types
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 // API Response types
 export interface ApiResponse<T> {
   success: boolean;

@@ -22,21 +22,21 @@ api.interceptors.request.use(
     }
 );
 
+// Auth endpoints must never trigger the token-refresh flow. A failed login or
+// register returns 401 by design, and the UI needs that error to display
+// (e.g. "Invalid email or password") instead of being hijacked into a refresh
+// attempt that clears storage and hard-redirects to /login.
+const AUTH_ENDPOINTS = ['/auth/login', '/auth/register', '/auth/refresh-token', '/auth/logout'];
+
 // Response interceptor to handle errors
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
+        const url: string = originalRequest?.url || '';
+        const isAuthEndpoint = AUTH_ENDPOINTS.some((path) => url.includes(path));
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            // Prevent infinite loop if refresh token endpoint itself fails
-            if (originalRequest.url?.includes('/auth/refresh-token')) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = '/login';
-                return Promise.reject(error);
-            }
-
+        if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
             originalRequest._retry = true;
 
             try {
