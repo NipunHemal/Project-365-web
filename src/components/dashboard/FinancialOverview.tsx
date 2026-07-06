@@ -13,7 +13,7 @@ const FinancialOverview = ({ data }: FinancialOverviewProps) => {
     return (
         <Card className="h-full">
             <h3 className="text-lg font-bold text-gray-900 mb-6">Financial Overview</h3>
-            <div className="h-[300px] w-full">
+            <div className="h-75 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />

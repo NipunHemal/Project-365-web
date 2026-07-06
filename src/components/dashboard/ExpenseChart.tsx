@@ -13,7 +13,7 @@ const ExpenseChart = ({ data }: ExpenseChartProps) => {
     return (
         <Card className="h-full">
             <h3 className="text-lg font-bold text-gray-900 mb-6">Expense Trend</h3>
-            <div className="h-[300px] w-full">
+            <div className="h-75 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={data}>
                         <defs>

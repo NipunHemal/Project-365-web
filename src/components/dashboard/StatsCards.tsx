@@ -13,7 +13,7 @@ interface StatsCardsProps {
 const StatsCards = ({ totalBalance, totalIncome, totalExpense }: StatsCardsProps) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="bg-gradient-to-br from-blue-600 to-blue-700 text-white border-none shadow-blue-200">
+            <Card className="bg-linear-to-br from-blue-600 to-blue-700 text-white border-none shadow-blue-200">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-white/20 rounded-xl">
                         <HiBanknotes className="w-8 h-8" />

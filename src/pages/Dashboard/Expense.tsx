@@ -176,7 +176,7 @@ const Expense = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card>
                     <h3 className="text-lg font-bold text-gray-900 mb-6">Expense Trend</h3>
-                    <div className="h-[300px] w-full">
+                    <div className="h-75 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={chartData}>
                                 <defs>
@@ -197,7 +197,7 @@ const Expense = () => {
 
                 <Card>
                     <h3 className="text-lg font-bold text-gray-900 mb-6">Expenses by Category</h3>
-                    <div className="h-[300px] w-full">
+                    <div className="h-75 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie data={pieChartData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value">
@@ -216,7 +216,7 @@ const Expense = () => {
                 {/* Monthly Breakdown */}
                 <Card>
                     <h3 className="text-lg font-bold text-gray-900 mb-6">Monthly Breakdown</h3>
-                    <div className="h-[250px] w-full">
+                    <div className="h-75 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={barChartData}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
