@@ -33,7 +33,7 @@ const CategoryPieChart = ({ data }: CategoryPieChartProps) => {
                         </Pie>
                         <Tooltip
                             contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
-                            formatter={(value: number) => formatCurrency(value)}
+                            formatter={(value: number | undefined) => formatCurrency(value || 0)}
                         />
                         <Legend verticalAlign="bottom" height={36} iconType="circle" />
                     </PieChart>

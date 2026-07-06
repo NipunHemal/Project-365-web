@@ -40,7 +40,7 @@ const IncomeChart = ({ data }: IncomeChartProps) => {
                         />
                         <Tooltip
                             contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
-                            formatter={(value: number) => [formatCurrency(value), 'Income']}
+                            formatter={(value: number | undefined) => [formatCurrency(value ?? 0), 'Income']}
                         />
                         <Area
                             type="monotone"
