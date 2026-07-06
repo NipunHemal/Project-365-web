@@ -54,6 +54,20 @@ export const getProfile = createAsyncThunk(
     }
 );
 
+export const logoutUser = createAsyncThunk(
+    'auth/logoutUser',
+    async (_, { dispatch }) => {
+        try {
+            await api.post('/auth/logout');
+        } catch (error: unknown) {
+            // Ignore server error and proceed to clear client state
+            console.error('Logout failed on server', error);
+        } finally {
+            dispatch(authSlice.actions.logout());
+        }
+    }
+);
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,

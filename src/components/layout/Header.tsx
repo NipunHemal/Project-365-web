@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { logout } from '@/store/slices/authSlice';
+import { logoutUser } from '@/store/slices/authSlice';
 import { HiArrowRightOnRectangle, HiUser, HiBars3 } from 'react-icons/hi2';
 import Button from '@/components/ui/Button';
 
@@ -12,7 +12,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
     const { user } = useAppSelector((state) => state.auth);
 
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(logoutUser());
     };
 
     return (

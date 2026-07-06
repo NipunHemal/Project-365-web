@@ -5,6 +5,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true,
 });
 
 // Request interceptor to add auth token
@@ -24,11 +25,38 @@ api.interceptors.request.use(
 // Response interceptor to handle errors
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
+    async (error) => {
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            // Prevent infinite loop if refresh token endpoint itself fails
+            if (originalRequest.url?.includes('/auth/refresh-token')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+                return Promise.reject(error);
+            }
+
+            originalRequest._retry = true;
+
+            try {
+                const response = await api.post('/auth/refresh-token');
+                const { token } = response.data.data;
+
+                localStorage.setItem('token', token);
+
+                // Update header for future requests
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                // Update header for this request
+                originalRequest.headers['Authorization'] = `Bearer ${token}`;
+
+                return api(originalRequest);
+            } catch (refreshError) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+                return Promise.reject(refreshError);
+            }
         }
         return Promise.reject(error);
     }
